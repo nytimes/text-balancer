@@ -1,0 +1,11 @@
+{
+  "name": "text-balancer",
+  "version": "1.0.4",
+  "description": "Plugin to blanace text",
+  "main": "text-balancer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Beswetherick",
+  "license": "MIT"
+}
