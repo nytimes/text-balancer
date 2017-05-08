@@ -13,3 +13,7 @@ textBalancer.balanceText('.headline, .interactive-leadin, #horse-god');
 // OR: Just run it and it will look for anything with the balance-text class
 textBalancer.balanceText();
 ```
+
+### Tests
+
+No tests right now, but we'd like to add some! It's being used on nytimes.com and has been debugged and tested extensively on that.
