@@ -2,6 +2,17 @@
 
 Text-balancer is a javascript module that seeks to eliminate typographic widows from text. It does this by setting the max-width of the dom node to the threshold that it would spill onto another line.
 
+### Setup instructions
+
+Install it into your project via npm
+
+`npm install text-balancer --save`
+
+https://www.npmjs.com/package/text-balancer
+
+We use bramstein's Font Face Observer to check when our fonts have loaded: https://github.com/bramstein/fontfaceobserver
+We run our text-balancer once this has happened.
+
 ### How to run it
 
 ```
