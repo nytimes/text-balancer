@@ -11,7 +11,8 @@ Install it into your project via npm
 https://www.npmjs.com/package/text-balancer
 
 We use bramstein's Font Face Observer to check when our fonts have loaded: https://github.com/bramstein/fontfaceobserver
-We run our text-balancer once this has happened.
+
+We run our text-balancer once our fonts load.
 
 ### How to run it
 
