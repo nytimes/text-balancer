@@ -1,6 +1,6 @@
 # text-balancer
 
-This will balance your text.
+Text-balancer is a javascript module that seeks to eliminate typographic widows from text. It does this by setting the max-width of the dom node to the threshold that it would spill onto another line.
 
 ### How to run it
 

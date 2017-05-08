@@ -1,6 +1,6 @@
 {
   "name": "text-balancer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Plugin to blanace text",
   "main": "text-balancer.js",
   "scripts": {
