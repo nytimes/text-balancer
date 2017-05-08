@@ -16,4 +16,4 @@ textBalancer.balanceText();
 
 ### Tests
 
-No tests right now, but we'd like to add some! It's being used on nytimes.com and has been debugged and tested extensively on that.
+No tests right now, but we're working on them! It's being used on nytimes.com and has been debugged and tested extensively on that.
