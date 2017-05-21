@@ -16,7 +16,7 @@ We run our text-balancer once our fonts load.
 
 ### How to run it
 
-```
+```javascript
 import textBalancer from 'text-balancer';
 
 // Run it when you want to with any set of selectors
