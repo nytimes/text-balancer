@@ -361,7 +361,6 @@
     var balanceText = function (elements) {
         var element;
         var i;
-        var lowercaseWord = false;
 
         for (i = 0; i < elements.length; i++) {
             element = elements[i];
