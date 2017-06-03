@@ -19,7 +19,8 @@
     // Default settings.
     var defaults = {
         candidates: [],
-        targetClass: 'balance-text'
+        targetClass: 'balance-text',
+        splitOnLowercase: true
     };
 
     /**
@@ -318,19 +319,21 @@
              */
             element.style.maxWidth = Math.ceil(topRange + 1) + 'px';
 
-            // Get the last word of the first line and the first word of the second line.
-            var breakingWords = getBreakingWords(element);
+            if (!settings.splitOnLowercase) {
+                // Get the last word of the first line and the first word of the second line.
+                var breakingWords = getBreakingWords(element);
 
-            // Make sure breakingWords has the correct format.
-            if (Array.isArray(breakingWords)) {
-                /**
-                 * If last word on first line is lowercase but the word after that isn't,
-                 * add extra width to make both words fit on the first line.
-                 */
-                if (isLowercaseWord(breakingWords[0]) && !isLowercaseWord(breakingWords[1])) {
-                    var newWidth = getNewWidth(element, breakingWords[2]);
+                // Make sure breakingWords has the correct format.
+                if (Array.isArray(breakingWords)) {
+                    /**
+                     * If last word on first line is lowercase but the word after that isn't,
+                     * add extra width to make both words fit on the first line.
+                     */
+                    if (isLowercaseWord(breakingWords[0]) && !isLowercaseWord(breakingWords[1])) {
+                        var newWidth = getNewWidth(element, breakingWords[2]);
 
-                    element.style.maxWidth = Math.ceil(newWidth + 1) + 'px';
+                        element.style.maxWidth = Math.ceil(newWidth + 1) + 'px';
+                    }
                 }
             }
 
