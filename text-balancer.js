@@ -14,7 +14,7 @@
      * Variables.
      */
     var window = root; // Map window to root to avoid confusion.
-    var publicMethods = {}; // Placeholder for public methods
+    var textBalancer = {}; // Placeholder for public methods
 
     // Default settings.
     var defaults = {
@@ -380,7 +380,7 @@
      * Initalize plugin.
      * @param {Object} options Options supplied by the user.
      */
-    publicMethods.init = function (options) {
+    textBalancer.init = function (options) {
         // Merge user options with defaults.
         var settings = extend(defaults, options || {});
 
@@ -407,6 +407,6 @@
      * Public APIs
      */
 
-    return publicMethods;
+    return textBalancer;
 
 });
