@@ -61,14 +61,28 @@ var balanceText = function () {
 
     for (i = 0; i < candidates.length; i += 1) {
         element = candidates[i];
-        element.style.maxWidth = '';
-        squeezeContainer(element, element.clientHeight, 0, element.clientWidth);
+        clearMaxWidth(element);
+        var computedStyle = getComputedStyle(element, null);
+        if (computedStyle.textAlign === 'start') { // only squeeze left-aligned elements
+            squeezeContainerLeft(element, element.clientHeight, 0, element.clientWidth);
+        }
     }
-
 }
 
-// Make the element as narrow as possible while maintaining its current height (number of lines). Binary search.
-var squeezeContainer = function (element, originalHeight, bottomRange, topRange) {
+var clearMaxWidth = function (element) {
+    // For now, this library assumes it is the keeper of all maxWidth
+    // values in its DOM elements. If this element has a computed style
+    // of 'center' (or anything besides 'start' aka left), that must
+    // be because the window was shrunk and we responsively made it
+    // left-justified and this library assigned it a maxWidth. If we
+    // expand the window again, we need to reevaluate all maxWidths.
+    // We start by erasing our previous work.
+    element.style.maxWidth = '';
+}
+
+// Make the element as narrow as possible (by leaving the left side anchored and
+// reducing the width) while maintaining its current height (number of lines). Binary search.
+var squeezeContainerLeft = function (element, originalHeight, bottomRange, topRange) {
     var mid;
     if (bottomRange >= topRange) {
         element.style.maxWidth = topRange + 'px';
@@ -79,10 +93,10 @@ var squeezeContainer = function (element, originalHeight, bottomRange, topRange)
 
     if (element.clientHeight > originalHeight) {
         // we've squoze too far and element has spilled onto an additional line; recurse on wider range
-        squeezeContainer(element, originalHeight, mid+1, topRange);
+        squeezeContainerLeft(element, originalHeight, mid+1, topRange);
     } else {
         // element has not wrapped to another line; keep squeezing!
-        squeezeContainer(element, originalHeight, bottomRange+1, mid);
+        squeezeContainerLeft(element, originalHeight, bottomRange+1, mid);
     }
 }
 
