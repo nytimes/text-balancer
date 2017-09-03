@@ -3,7 +3,7 @@ var candidates = [];
 // pass in a string of selectors to be balanced.
 // if you didnt specify any, thats ok! We'll just
 // balance anything with the balance-text class
-var textBalancer = function (selectors) {
+var textBalancer = function (selectors, fraction) {
 
     if (!selectors) {
         candidates = document.querySelectorAll('.balance-text');
@@ -11,10 +11,10 @@ var textBalancer = function (selectors) {
         createSelectors(selectors);
     }
 
-    balanceText();
+    balanceText(fraction);
 
     var rebalanceText = debounce(function() {
-        balanceText();
+        balanceText(fraction);
     }, 100);
 
     window.addEventListener('resize', rebalanceText);
@@ -55,7 +55,7 @@ var debounce = function (func, wait, immediate) {
 
 
 // HELPER FUNCTION -- initializes recursive binary search
-var balanceText = function () {
+var balanceText = function (fraction) {
     var element;
     var i;
 
@@ -68,7 +68,7 @@ var balanceText = function () {
             // can be "visually recoverable," so half is our starting minimum
             // (minus a fudge factor, with a minimum of 50).
             var bottomRange = Math.max(50, element.offsetWidth / 2 - 10);
-            squeezeContainerLeft(element, element.clientHeight, bottomRange, element.clientWidth);
+            squeezeContainerLeft(element, element.clientHeight, element.offsetWidth, bottomRange, element.clientWidth, fraction);
         }
     }
 }
@@ -86,24 +86,25 @@ var clearMaxWidth = function (element) {
 
 // Make the element as narrow as possible (by leaving the left side anchored and
 // reducing the width) while maintaining its current height (number of lines). Binary search.
-var squeezeContainerLeft = function (element, originalHeight, bottomRange, topRange) {
+var squeezeContainerLeft = function (element, originalHeight, originalWidth, bottomRange, topRange, fraction) {
     // If we get within 5 pixels that's close enough, we don't need to
     // do the last 2 iterations. Call topRange the new minimum width.
     if (bottomRange + 5 >= topRange) {
-        element.style.maxWidth = Math.round(topRange).toString() + 'px';
+        element.style.maxWidth = Math.round(originalWidth - fraction*(originalWidth-topRange)).toString() + 'px';
         return;
     }
 
     // Otherwise, pick the midpoint (maybe fractional) and squeeze to that size.
+
     var mid = (bottomRange + topRange) / 2;
     element.style.maxWidth = mid + 'px';
 
     if (element.clientHeight > originalHeight) {
         // we've squoze too far and element has spilled onto an additional line; recurse on wider range
-        squeezeContainerLeft(element, originalHeight, mid+1, topRange);
+        squeezeContainerLeft(element, originalHeight, originalWidth, mid+1, topRange, fraction);
     } else {
         // element has not wrapped to another line; keep squeezing!
-        squeezeContainerLeft(element, originalHeight, bottomRange, mid);
+        squeezeContainerLeft(element, originalHeight, originalWidth, bottomRange+1, mid, fraction);
     }
 }
 
