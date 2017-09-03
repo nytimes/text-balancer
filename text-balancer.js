@@ -83,12 +83,15 @@ var clearMaxWidth = function (element) {
 // Make the element as narrow as possible (by leaving the left side anchored and
 // reducing the width) while maintaining its current height (number of lines). Binary search.
 var squeezeContainerLeft = function (element, originalHeight, bottomRange, topRange) {
-    var mid;
-    if (bottomRange >= topRange) {
-        element.style.maxWidth = topRange + 'px';
+    // If we get within 5 pixels that's close enough, we don't need to
+    // do the last 2 iterations. Call topRange the new minimum width.
+    if (bottomRange + 5 >= topRange) {
+        element.style.maxWidth = Math.round(topRange).toString() + 'px';
         return;
     }
-    mid = (bottomRange + topRange) / 2;
+
+    // Otherwise, pick the midpoint (maybe fractional) and squeeze to that size.
+    var mid = (bottomRange + topRange) / 2;
     element.style.maxWidth = mid + 'px';
 
     if (element.clientHeight > originalHeight) {
