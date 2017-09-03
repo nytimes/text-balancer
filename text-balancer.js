@@ -103,7 +103,7 @@ var squeezeContainerLeft = function (element, originalHeight, bottomRange, topRa
         squeezeContainerLeft(element, originalHeight, mid+1, topRange);
     } else {
         // element has not wrapped to another line; keep squeezing!
-        squeezeContainerLeft(element, originalHeight, bottomRange+1, mid);
+        squeezeContainerLeft(element, originalHeight, bottomRange, mid);
     }
 }
 
