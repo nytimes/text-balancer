@@ -64,7 +64,11 @@ var balanceText = function () {
         clearMaxWidth(element);
         var computedStyle = getComputedStyle(element, null);
         if (computedStyle.textAlign === 'start') { // only squeeze left-aligned elements
-            squeezeContainerLeft(element, element.clientHeight, 0, element.clientWidth);
+            // In an n-line element, at most roughly 1/n'th of the horizontal width
+            // can be "visually recoverable," so half is our starting minimum
+            // (minus a fudge factor, with a minimum of 50).
+            var bottomRange = Math.max(50, element.offsetWidth / 2 - 10);
+            squeezeContainerLeft(element, element.clientHeight, bottomRange, element.clientWidth);
         }
     }
 }
