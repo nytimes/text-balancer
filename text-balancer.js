@@ -97,7 +97,7 @@ var squeezeContainerLeft = function (element, originalHeight, originalWidth, bot
     // If we get within 5 pixels that's close enough, we don't need to
     // do the last 2 iterations. Call topRange the new minimum width.
     if (bottomRange + 5 >= topRange) {
-        element.style.maxWidth = Math.round(originalWidth - fraction*(originalWidth-topRange)).toString() + 'px';
+        element.style.maxWidth = Math.ceil(originalWidth - fraction*(originalWidth-topRange)).toString() + 'px';
         return;
     }
 
