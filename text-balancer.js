@@ -3,12 +3,19 @@ var candidates = [];
 // pass in a string of selectors to be balanced.
 // if you didnt specify any, thats ok! We'll just
 // balance anything with the balance-text class
-var textBalancer = function (selectors, fraction) {
+var textBalancer = function (selectors, fraction=1.0) {
 
     if (!selectors) {
         candidates = document.querySelectorAll('.balance-text');
     } else {
         createSelectors(selectors);
+    }
+    fraction = +fraction;
+    if ((typeof fraction) != 'number' || isNaN(fraction)) {
+        fraction = 1.0;
+    } else {
+        fraction = Math.max(0.0, Math.min(1.0, fraction))
+        if (fraction == 0.0) return;
     }
 
     balanceText(fraction);
