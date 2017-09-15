@@ -108,10 +108,10 @@ var squeezeContainerLeft = function (element, originalHeight, originalWidth, bot
 
     if (element.clientHeight > originalHeight) {
         // we've squoze too far and element has spilled onto an additional line; recurse on wider range
-        squeezeContainerLeft(element, originalHeight, originalWidth, mid+1, topRange, fraction);
+        squeezeContainerLeft(element, originalHeight, originalWidth, mid, topRange, fraction);
     } else {
         // element has not wrapped to another line; keep squeezing!
-        squeezeContainerLeft(element, originalHeight, originalWidth, bottomRange+1, mid, fraction);
+        squeezeContainerLeft(element, originalHeight, originalWidth, bottomRange, mid, fraction);
     }
 }
 
