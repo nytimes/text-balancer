@@ -26,6 +26,17 @@ textBalancer.balanceText('.headline, .interactive-leadin, #horse-god');
 textBalancer.balanceText();
 ```
 
-### Tests
+### If you're not running node/npm
+```
+Include text-balancer.standalone.js wherever you load your js files
+and then:
+PUT THIS SCRIPT AFTER YOUR MARKUP IDEALLY UNDER THE BODY TAG
+OR JUST WRAP IT IN SOME SORT OF AN ONLOAD EVENT :)
+<script>
+// Run it when you want to with any set of selectors
+textBalancer.initialize('.headline, .interactive-leadin, #horse-god');
 
-No tests right now, but we're working on them! It's being used on nytimes.com and has been debugged and tested extensively on that.
+// OR: Just run it and it will look for anything with the balance-text class
+textBalancer.balanceText();
+</script>
+```
