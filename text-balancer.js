@@ -3,18 +3,25 @@ var candidates = [];
 // pass in a string of selectors to be balanced.
 // if you didnt specify any, thats ok! We'll just
 // balance anything with the balance-text class
-var textBalancer = function (selectors) {
+var textBalancer = function (selectors, fraction=1.0) {
 
     if (!selectors) {
         candidates = document.querySelectorAll('.balance-text');
     } else {
         createSelectors(selectors);
     }
+    fraction = +fraction;
+    if ((typeof fraction) != 'number' || isNaN(fraction)) {
+        fraction = 1.0;
+    } else {
+        fraction = Math.max(0.0, Math.min(1.0, fraction))
+        if (fraction == 0.0) return;
+    }
 
-    balanceText();
+    balanceText(fraction);
 
     var rebalanceText = debounce(function() {
-        balanceText();
+        balanceText(fraction);
     }, 100);
 
     window.addEventListener('resize', rebalanceText);
@@ -23,7 +30,7 @@ var textBalancer = function (selectors) {
 // this populates our candidates array with dom objects
 // that need to be balanced
 var createSelectors = function(selectors) {
-    selectorArray = selectors.split(',');
+    var selectorArray = selectors.split(',');
     for (var i = 0; i < selectorArray.length; i += 1) {
         var currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
 
@@ -55,100 +62,57 @@ var debounce = function (func, wait, immediate) {
 
 
 // HELPER FUNCTION -- initializes recursive binary search
-var balanceText = function () {
+var balanceText = function (fraction) {
     var element;
     var i;
 
     for (i = 0; i < candidates.length; i += 1) {
         element = candidates[i];
-
-        if (textElementIsMultipleLines(element)) {
-            element.style.maxWidth = '';
-            squeezeContainer(element, element.clientHeight, 0, element.clientWidth);
+        clearMaxWidth(element);
+        var computedStyle = getComputedStyle(element, null);
+        if (computedStyle.textAlign === 'start') { // only squeeze left-aligned elements
+            // In an n-line element, at most roughly 1/n'th of the horizontal width
+            // can be "visually recoverable," so half is our starting minimum
+            // (minus a fudge factor, with a minimum of 50).
+            var bottomRange = Math.max(50, element.offsetWidth / 2 - 10);
+            squeezeContainerLeft(element, element.clientHeight, element.offsetWidth, bottomRange, element.clientWidth, fraction);
         }
-
     }
-
 }
 
-// Make the element as narrow as possible while maintaining its current height (number of lines). Binary search.
-var squeezeContainer = function (element, originalHeight, bottomRange, topRange) {
-    var mid;
-    if (bottomRange >= topRange) {
-        element.style.maxWidth = topRange + 'px';
+var clearMaxWidth = function (element) {
+    // For now, this library assumes it is the keeper of all maxWidth
+    // values in its DOM elements. If this element has a computed style
+    // of 'center' (or anything besides 'start' aka left), that must
+    // be because the window was shrunk and we responsively made it
+    // left-justified and this library assigned it a maxWidth. If we
+    // expand the window again, we need to reevaluate all maxWidths.
+    // We start by erasing our previous work.
+    element.style.maxWidth = '';
+}
+
+// Make the element as narrow as possible (by leaving the left side anchored and
+// reducing the width) while maintaining its current height (number of lines). Binary search.
+var squeezeContainerLeft = function (element, originalHeight, originalWidth, bottomRange, topRange, fraction) {
+    // If we get within 5 pixels that's close enough, we don't need to
+    // do the last 2 iterations. Call topRange the new minimum width.
+    if (bottomRange + 5 >= topRange) {
+        element.style.maxWidth = Math.ceil(originalWidth - fraction*(originalWidth-topRange)).toString() + 'px';
         return;
     }
-    mid = (bottomRange + topRange) / 2;
+
+    // Otherwise, pick the midpoint (maybe fractional) and squeeze to that size.
+
+    var mid = (bottomRange + topRange) / 2;
     element.style.maxWidth = mid + 'px';
 
     if (element.clientHeight > originalHeight) {
         // we've squoze too far and element has spilled onto an additional line; recurse on wider range
-        squeezeContainer(element, originalHeight, mid+1, topRange);
+        squeezeContainerLeft(element, originalHeight, originalWidth, mid, topRange, fraction);
     } else {
         // element has not wrapped to another line; keep squeezing!
-        squeezeContainer(element, originalHeight, bottomRange+1, mid);
+        squeezeContainerLeft(element, originalHeight, originalWidth, bottomRange, mid, fraction);
     }
 }
-
-// function to see if a headline is multiple lines
-// we only want to break if the headline is multiple lines
-//
-// We achieve this by turning the first word into a span
-// and then we compare the height of that span to the height
-// of the entire headline. If the headline is bigger than the
-// span by 10px we balance the headline.
-var textElementIsMultipleLines = function (element) {
-    var firstWordHeight;
-    var elementHeight;
-    var HEIGHT_OFFSET;
-    var elementWords;
-    var firstWord;
-    var ORIGINAL_ELEMENT_TEXT;
-
-    ORIGINAL_ELEMENT_TEXT = element.innerHTML;
-
-    // usually there is around a 5px discrepency between
-    // the first word and the height of the whole headline
-    // so subtract the height of the headline by 10 px and
-    // we should be good
-    HEIGHT_OFFSET = 10;
-
-    // get all the words in the headline as
-    // an array -- will include punctuation
-    //
-    // this is used to put the headline back together
-    elementWords = element.innerHTML.split(' ');
-
-    // make span for first word and give it an id
-    // so we can access it in le dom
-    firstWord = document.createElement('span');
-    firstWord.id = 'element-first-word';
-    firstWord.innerHTML = elementWords[0];
-
-    // this is the entire headline
-    // as an array except for first word
-    //
-    // we will append it to the headline after the span
-    elementWords = elementWords.slice(1);
-
-    // empty the headline and append the span to it
-    element.innerHTML = '';
-    element.appendChild(firstWord);
-
-    // add the rest of the element back to it
-    element.innerHTML += ' ' + elementWords.join(' ');
-
-    // update the first word variable in the dom
-    firstWord = document.getElementById('element-first-word');
-
-    firstWordHeight = firstWord.offsetHeight;
-    elementHeight = element.offsetHeight;
-    // restore the original element text
-    element.innerHTML = ORIGINAL_ELEMENT_TEXT;
-
-    // compare the height of the element and the height of the first word
-    return elementHeight - HEIGHT_OFFSET > firstWordHeight;
-
-} // end headlineIsMultipleLines
 
 exports.balanceText = textBalancer;
