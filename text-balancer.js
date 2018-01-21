@@ -23,7 +23,7 @@ var textBalancer = function (selectors) {
 // this populates our candidates array with dom objects
 // that need to be balanced
 var createSelectors = function(selectors) {
-    selectorArray = selectors.split(',');
+    var selectorArray = selectors.split(',');
     for (var i = 0; i < selectorArray.length; i += 1) {
         var currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
 
