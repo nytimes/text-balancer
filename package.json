@@ -1,7 +1,7 @@
 {
   "name": "text-balancer",
   "version": "1.0.5",
-  "description": "Plugin to blanace text",
+  "description": "Plugin to balance text",
   "main": "text-balancer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
