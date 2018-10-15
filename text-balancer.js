@@ -1,9 +1,9 @@
-var candidates = [];
+let candidates = [];
 
 // pass in a string of selectors to be balanced.
 // if you didnt specify any, thats ok! We'll just
 // balance anything with the balance-text class
-var textBalancer = function (selectors) {
+const textBalancer = selectors => {
 
     if (!selectors) {
         candidates = document.querySelectorAll('.balance-text');
@@ -13,22 +13,21 @@ var textBalancer = function (selectors) {
 
     balanceText();
 
-    var rebalanceText = debounce(function() {
+    const rebalanceText = debounce(() => {
         balanceText();
     }, 100);
 
     window.addEventListener('resize', rebalanceText);
-}
+};
 
 // this populates our candidates array with dom objects
 // that need to be balanced
-var createSelectors = function(selectors) {
+var createSelectors = selectors => {
     selectorArray = selectors.split(',');
-    for (var i = 0; i < selectorArray.length; i += 1) {
-        var currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
+    for (let i = 0; i < selectorArray.length; i += 1) {
+        const currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
 
-        for (var j = 0; j < currentSelectorElements.length; j += 1) {
-            var currentSelectorElement = currentSelectorElements[j];
+        for (const currentSelectorElement of currentSelectorElements) {
             candidates.push(currentSelectorElement);
         }
     }
@@ -38,15 +37,16 @@ var createSelectors = function(selectors) {
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
-var debounce = function (func, wait, immediate) {
-    var timeout;
+var debounce = (func, wait, immediate) => {
+    let timeout;
     return function() {
-        var context = this, args = arguments;
-        var later = function() {
+        const context = this;
+        const args = arguments;
+        const later = () => {
             timeout = null;
             if (!immediate) func.apply(context, args);
         };
-        var callNow = immediate && !timeout;
+        const callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
@@ -55,9 +55,9 @@ var debounce = function (func, wait, immediate) {
 
 
 // HELPER FUNCTION -- initializes recursive binary search
-var balanceText = function () {
-    var element;
-    var i;
+var balanceText = () => {
+    let element;
+    let i;
 
     for (i = 0; i < candidates.length; i += 1) {
         element = candidates[i];
@@ -72,14 +72,14 @@ var balanceText = function () {
 }
 
 // Make the element as narrow as possible while maintaining its current height (number of lines). Binary search.
-var squeezeContainer = function (element, originalHeight, bottomRange, topRange) {
-    var mid;
+var squeezeContainer = (element, originalHeight, bottomRange, topRange) => {
+    let mid;
     if (bottomRange >= topRange) {
-        element.style.maxWidth = topRange + 'px';
+        element.style.maxWidth = `${topRange}px`;
         return;
     }
     mid = (bottomRange + topRange) / 2;
-    element.style.maxWidth = mid + 'px';
+    element.style.maxWidth = `${mid}px`;
 
     if (element.clientHeight > originalHeight) {
         // we've squoze too far and element has spilled onto an additional line; recurse on wider range
@@ -97,13 +97,13 @@ var squeezeContainer = function (element, originalHeight, bottomRange, topRange)
 // and then we compare the height of that span to the height
 // of the entire headline. If the headline is bigger than the
 // span by 10px we balance the headline.
-var textElementIsMultipleLines = function (element) {
-    var firstWordHeight;
-    var elementHeight;
-    var HEIGHT_OFFSET;
-    var elementWords;
-    var firstWord;
-    var ORIGINAL_ELEMENT_TEXT;
+var textElementIsMultipleLines = element => {
+    let firstWordHeight;
+    let elementHeight;
+    let HEIGHT_OFFSET;
+    let elementWords;
+    let firstWord;
+    let ORIGINAL_ELEMENT_TEXT;
 
     ORIGINAL_ELEMENT_TEXT = element.innerHTML;
 
@@ -136,7 +136,7 @@ var textElementIsMultipleLines = function (element) {
     element.appendChild(firstWord);
 
     // add the rest of the element back to it
-    element.innerHTML += ' ' + elementWords.join(' ');
+    element.innerHTML += ` ${elementWords.join(' ')}`;
 
     // update the first word variable in the dom
     firstWord = document.getElementById('element-first-word');
@@ -151,4 +151,4 @@ var textElementIsMultipleLines = function (element) {
 
 } // end headlineIsMultipleLines
 
-exports.balanceText = textBalancer;
+export {textBalancer as balanceText};
