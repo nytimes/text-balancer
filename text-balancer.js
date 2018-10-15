@@ -1,5 +1,38 @@
 let candidates = [];
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+const debounce = (func, wait, immediate) => {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        const later = () => {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+
+// this populates our candidates array with dom objects
+// that need to be balanced
+const createSelectors = selectors => {
+    selectorArray = selectors.split(',');
+    for (let i = 0; i < selectorArray.length; i += 1) {
+        const currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
+
+        for (const currentSelectorElement of currentSelectorElements) {
+            candidates.push(currentSelectorElement);
+        }
+    }
+}
+
 // pass in a string of selectors to be balanced.
 // if you didnt specify any, thats ok! We'll just
 // balance anything with the balance-text class
@@ -18,39 +51,6 @@ const textBalancer = selectors => {
     }, 100);
 
     window.addEventListener('resize', rebalanceText);
-};
-
-// this populates our candidates array with dom objects
-// that need to be balanced
-var createSelectors = selectors => {
-    selectorArray = selectors.split(',');
-    for (let i = 0; i < selectorArray.length; i += 1) {
-        const currentSelectorElements = document.querySelectorAll(selectorArray[i].trim());
-
-        for (const currentSelectorElement of currentSelectorElements) {
-            candidates.push(currentSelectorElement);
-        }
-    }
-}
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-var debounce = (func, wait, immediate) => {
-    let timeout;
-    return function() {
-        const context = this;
-        const args = arguments;
-        const later = () => {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        const callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
 };
 
 
