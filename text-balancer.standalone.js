@@ -19,7 +19,14 @@ textBalancer = (function () {
             balanceText();
         }, 100);
 
-        window.addEventListener('resize', rebalanceText);
+        if (typeof(ResizeObserver) !== 'undefined') {
+            const observer = new ResizeObserver(rebalanceText);
+            for (let elm of candidates) {
+                observer.observe(elm);
+            }
+        } else {
+            window.addEventListener('resize', rebalanceText);
+        }
     }
 
     // HELPER FUNCTION -- initializes recursive binary search
